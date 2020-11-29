@@ -1,4 +1,4 @@
-# ONVIF Device(IP camera) Service server
+# ONVIF Device(IP camera) Service server adapted for cross compiling (target: Xiaomi MJSXJ05CM camera)
 
 
 ## Description

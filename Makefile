@@ -8,7 +8,7 @@ DAEMON_NO_CHDIR       = 1
 DAEMON_NO_CLOSE_STDIO = 0
 
 
-GSOAP_VERSION     = 2.8.92
+GSOAP_VERSION     = 2.8.109
 GSOAP_INSTALL_DIR = ./gsoap-2.8
 GSOAP_DIR         = $(GSOAP_INSTALL_DIR)/gsoap
 GSOAP_CUSTOM_DIR  = $(GSOAP_DIR)/custom
@@ -18,7 +18,7 @@ GSOAP_IMPORT_DIR  = $(GSOAP_DIR)/import
 
 SOAPCPP2          = $(GSOAP_DIR)/src/soapcpp2
 WSDL2H            = $(GSOAP_DIR)/wsdl/wsdl2h
-GSOAP_CONFIGURE   = --disable-c-locale
+GSOAP_CONFIGURE   = --disable-xlocale --disable-c-locale --disable-ssl
 
 
 COMMON_DIR        = ./src
@@ -37,10 +37,10 @@ CXXFLAGS         += -DDAEMON_NO_CLOSE_STDIO=$(DAEMON_NO_CLOSE_STDIO)
 CXXFLAGS         += -I$(COMMON_DIR)
 CXXFLAGS         += -I$(GENERATED_DIR)
 CXXFLAGS         += -I$(GSOAP_DIR) -I$(GSOAP_CUSTOM_DIR) -I$(GSOAP_PLUGIN_DIR) -I$(GSOAP_IMPORT_DIR)
-CXXFLAGS         += -std=c++11 -O2  -Wall  -pipe
+CXXFLAGS         += -std=c++11 -O2  -Wall  -pipe -DWITH_NO_C_LOCALE
 
-CXX              ?= g++
-
+CXX              ?= arm-unknown-linux-uclibcgnueabihf-g++
+LDFLAGS          ?= -static-libstdc++
 
 
 
@@ -201,7 +201,7 @@ distclean: clean
 	@echo "Generating dependencies..."
 	@for src in $(SOURCES) ; do \
         echo "  [depend]  $$src" ; \
-        $(CXX) $(CXXFLAGS) -MT ".depend $${src%.*}.o $${src%.*}_$(DEBUG_SUFFIX).o" -MM $$src >> .depend ; \
+        $(CXX) $(LDFLAGS) $(CXXFLAGS) -MT ".depend $${src%.*}.o $${src%.*}_$(DEBUG_SUFFIX).o" -MM $$src >> .depend ; \
     done
 
 
@@ -241,14 +241,14 @@ BUILD_ECHO = echo "\n  [build]  $@:"
 
 define build_object
     @$(BUILD_ECHO)
-    $(CXX) -c $< -o $@  $(CXXFLAGS)
+    $(CXX) $(LDFLAGS) -c $< -o $@  $(CXXFLAGS)
 endef
 
 
 
 define build_bin
     @$(BUILD_ECHO)
-    $(CXX)  $1 -o $@  $(CXXFLAGS)
+    $(CXX)  $1 -o $@  $(CXXFLAGS) ($LDFLAGS)
     @echo "\n---- Compiled $@ ver $(DAEMON_MAJOR_VERSION).$(DAEMON_MINOR_VERSION).$(DAEMON_PATCH_VERSION) ----\n"
 endef
 

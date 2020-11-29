@@ -1,7 +1,7 @@
 #ifndef SERVICECONTEXT_H
 #define SERVICECONTEXT_H
 
-
+#include <cstring>
 #include <string>
 #include <vector>
 #include <map>

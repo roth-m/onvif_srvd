@@ -5,6 +5,9 @@
 #include <string.h>
 #include <getopt.h>
 
+#include <cstring>
+#include <string>
+
 
 #include "daemon.h"
 #include "smacros.h"
